@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="226" fill="#202126"/>
+  <path d="M150 512c0-200 162-362 362-362s362 162 362 362-162 362-362 362-362-162-362-362Z" fill="#2c2e35"/>
+  <path d="M200 512c0-172 140-312 312-312s312 140 312 312-140 312-312 312-312-140-312-312Z" fill="#191a1f"/>
+
+  <g filter="url(#shadow)">
+    <path d="M278 326c0-32 26-58 58-58s58 26 58 58v221c0 78 50 130 126 130s126-52 126-130V326c0-32 26-58 58-58s58 26 58 58v224c0 143-98 238-242 238s-242-95-242-238V326Z" fill="#f2f5fb"/>
+    <rect x="618" y="422" width="92" height="270" rx="46" fill="#168fff"/>
+    <rect x="740" y="314" width="92" height="378" rx="46" fill="#2bd766"/>
+    <rect x="496" y="548" width="92" height="144" rx="46" fill="#ff9f2f"/>
+  </g>
+
+  <path d="M214 278c54-76 142-126 241-136" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" opacity="0.18"/>
+</svg>

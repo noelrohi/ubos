@@ -17,6 +17,7 @@ struct ContentView: View {
 
     @State private var providers = UsageSnapshot.initial
     @State private var lastRefresh = Date()
+    @State private var nextRefresh = Date().addingTimeInterval(15 * 60)
     @State private var isRefreshing = false
     @State private var selectedProviderID = CodexUsageProvider.id
     @State private var refreshTask: Task<Void, Never>?
@@ -99,9 +100,19 @@ struct ContentView: View {
 
             Spacer()
 
-            Text(lastRefresh, style: .time)
-                .font(.caption2.monospacedDigit())
-                .foregroundStyle(.secondary)
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(lastRefresh, style: .time)
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.secondary)
+
+                TimelineView(.periodic(from: .now, by: 30)) { _ in
+                    Text(isRefreshing ? "Refreshing now" : "Next refresh \(nextRefresh, style: .relative)")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                        .monospacedDigit()
+                }
+            }
         }
     }
 
@@ -198,11 +209,14 @@ struct ContentView: View {
     private func startAutoRefreshLoop() {
         refreshTask?.cancel()
         let minutes = max(1, refreshIntervalMinutes)
+        let intervalSeconds = minutes * 60
+        nextRefresh = Date().addingTimeInterval(TimeInterval(intervalSeconds))
         refreshTask = Task {
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(minutes * 60))
+                try? await Task.sleep(for: .seconds(intervalSeconds))
                 guard !Task.isCancelled else { return }
                 await refreshData()
+                nextRefresh = Date().addingTimeInterval(TimeInterval(intervalSeconds))
             }
         }
     }

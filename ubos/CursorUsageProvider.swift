@@ -45,18 +45,18 @@ enum CursorUsageProvider {
                 return statusSnapshot(status: "expired", color: .orange, message: "Cursor token expired. Sign in via Cursor app or run `agent login`.")
             }
 
-            let usage = try await fetchUsage(accessToken: accessToken)
-            let planName = try? await fetchPlanName(accessToken: accessToken)
+            async let usage = fetchUsage(accessToken: accessToken)
+            async let planName = fetchPlanName(accessToken: accessToken)
             async let credits = fetchCredits(accessToken: accessToken)
             async let stripeBalance = fetchStripeBalance(accessToken: accessToken)
             async let requestUsage = fetchRequestUsage(accessToken: accessToken)
 
-            return buildUsageSnapshot(
+            return try await buildUsageSnapshot(
                 usage: usage,
-                planName: planName ?? "",
-                creditGrants: await credits,
-                stripeBalanceCents: await stripeBalance,
-                requestUsage: await requestUsage
+                planName: (try? planName) ?? "",
+                creditGrants: credits,
+                stripeBalanceCents: stripeBalance,
+                requestUsage: requestUsage
             )
         } catch {
             return statusSnapshot(status: "error", color: .red, message: error.localizedDescription)

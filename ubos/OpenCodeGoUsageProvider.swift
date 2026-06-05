@@ -13,6 +13,7 @@ enum OpenCodeGoUsageProvider {
     private static let sessionLimit = 12.0
     private static let weeklyLimit = 30.0
     private static let monthlyLimit = 60.0
+    private static var earliestUsageCache: Double?
 
     private static let historyCTE = """
         WITH history AS (
@@ -134,7 +135,10 @@ enum OpenCodeGoUsageProvider {
 
         defer { sqlite3_close(database) }
 
-        let earliestMs = earliestUsageMs(database: database)
+        let earliestMs = earliestUsageCache ?? earliestUsageMs(database: database)
+        if earliestUsageCache == nil, earliestMs != nil {
+            earliestUsageCache = earliestMs
+        }
         let nowMs = now.timeIntervalSince1970 * 1000.0
         let monthlyBounds = anchoredMonthBounds(nowMs: nowMs, anchorMs: earliestMs)
         let weeklyStartMs = startOfUTCWeek(now: now)

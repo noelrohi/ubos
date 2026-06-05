@@ -303,11 +303,32 @@ private struct CodexSettingsPane: View {
 }
 
 private struct AboutSettingsPane: View {
+    @ObservedObject private var updaterManager = UpdaterManager.shared
+
     var body: some View {
         Form {
             Section("ubos") {
                 LabeledContent("Version", value: AppVersion.displayString)
                 LabeledContent("Providers", value: "OpenCode Go, Cursor, Codex")
+            }
+
+            Section("Updates") {
+                Toggle(isOn: Binding(
+                    get: { updaterManager.automaticallyChecksForUpdates },
+                    set: { updaterManager.automaticallyChecksForUpdates = $0 }
+                )) {
+                    Text("Automatically check for updates")
+                }
+                .toggleStyle(.switch)
+
+                Button("Check for Updates...") {
+                    updaterManager.checkForUpdates()
+                }
+                .disabled(!updaterManager.canCheckForUpdates)
+
+                Text("Updates are checked through the GitHub-hosted Sparkle appcast.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Diagnostics") {

@@ -20,11 +20,13 @@ struct ubosApp: App {
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private let updaterManager = UpdaterManager.shared
     private var statusBarController: StatusBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppActivationPolicy.configureMenuBarOnly()
         statusBarController = StatusBarController()
+        updaterManager.start()
     }
 }
 

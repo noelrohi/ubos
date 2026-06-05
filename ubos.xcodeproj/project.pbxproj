@@ -21,7 +21,11 @@
 			remoteGlobalIDString = C8909F8D2FD28EA300D3F235;
 			remoteInfo = ubos;
 		};
-/* End PBXContainerItemProxy section */
+	/* End PBXContainerItemProxy section */
+
+/* Begin PBXBuildFile section */
+		C8909FC02FD28EA500D3F235 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C8909FC12FD28EA500D3F235 /* Sparkle */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		C8909F8E2FD28EA300D3F235 /* ubos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ubos.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8909FC02FD28EA500D3F235 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = ubos;
 			packageProductDependencies = (
+				C8909FC12FD28EA500D3F235 /* Sparkle */,
 			);
 			productName = ubos;
 			productReference = C8909F8E2FD28EA300D3F235 /* ubos.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = C8909F852FD28EA300D3F235;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C8909FC22FD28EA500D3F235 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C8909F8F2FD28EA300D3F235 /* Products */;
 			projectDirPath = "";
@@ -403,8 +412,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ubos/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -436,8 +445,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ubos/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -575,6 +584,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C8909FC22FD28EA500D3F235 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C8909FC12FD28EA500D3F235 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C8909FC22FD28EA500D3F235 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C8909F862FD28EA300D3F235 /* Project object */;
 }

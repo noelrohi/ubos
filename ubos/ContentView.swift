@@ -390,13 +390,22 @@ struct MetricLineView: View {
                 Spacer(minLength: 0)
             }
 
-            Text(displayedValueText)
-                .font(.caption.monospacedDigit().weight(.semibold))
-                .foregroundStyle(.primary)
-                .frame(minWidth: 58, alignment: .trailing)
-                .lineLimit(1)
+            VStack(alignment: .trailing, spacing: 1) {
+                Text(displayedValueText)
+                    .font(.caption.monospacedDigit().weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+
+                if let resetText = line.resetText, !resetText.isEmpty {
+                    Text(resetText)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+            .frame(minWidth: 104, alignment: .trailing)
         }
-        .frame(height: 16)
+        .frame(minHeight: line.resetText == nil ? 16 : 28)
         .help(helpText)
     }
 

@@ -5,6 +5,18 @@
     <description>Most recent changes for ubos.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.2 (Build 3)</title>
+      <pubDate>Fri, 05 Jun 2026 21:52:39 +0800</pubDate>
+      <sparkle:version>3</sparkle:version>
+      <sparkle:shortVersionString>1.0.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.2</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Improves the menu bar popover with outside-click dismissal and app activation.</li><li>Adds reset timing details to usage metric rows.</li></ul>]]></description>
+      <enclosure url="https://github.com/noelrohi/ubos/releases/download/v1.0.2/ubos-1.0.2.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="/9wic5fNr3gc1SWvFpt3NMYcncnPJiuR8djeOG3gS54QgE/Zy95TAq7Hxel+TKsf5ccCy01EzY5XFgHQZQhQDA=="
+                 length="1445775" />
+    </item>
+    <item>
       <title>Version 1.0.1 (Build 2)</title>
       <pubDate>Fri, 05 Jun 2026 18:07:21 +0800</pubDate>
       <sparkle:version>2</sparkle:version>

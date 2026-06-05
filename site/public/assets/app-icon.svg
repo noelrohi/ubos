@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="226" fill="#202126"/>
+
+  <g filter="url(#shadow)">
+    <path d="M250 330c0-37.6 30.4-68 68-68s68 30.4 68 68v216c0 78.5 50.5 130 128 130s128-51.5 128-130V330c0-37.6 30.4-68 68-68s68 30.4 68 68v219c0 150.5-106.5 251-264 251S250 699.5 250 549V330Z" fill="#f4f5f7"/>
+    <rect x="568" y="512" width="136" height="136" rx="68" fill="#202126"/>
+    <rect x="590" y="534" width="92" height="92" rx="46" fill="#f4f5f7"/>
+  </g>
+</svg>

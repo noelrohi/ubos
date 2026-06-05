@@ -1,0 +1,82 @@
+---
+import '../styles/global.css';
+
+const releaseUrl = 'https://github.com/noelrohi/ubos/releases/latest';
+const repoUrl = 'https://github.com/noelrohi/ubos';
+
+const providers = [
+  { name: 'Codex', detail: 'Usage from local auth and ChatGPT quota endpoints.' },
+  { name: 'Cursor', detail: 'Plan usage, credits, and on-demand spend.' },
+  { name: 'OpenCode Go', detail: 'Session, weekly, and monthly limits from local SQLite.' },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ubos is a native macOS menu bar app for tracking AI coding subscription usage across Codex, Cursor, and OpenCode Go." />
+    <meta property="og:title" content="ubos — AI usage in your macOS menu bar" />
+    <meta property="og:description" content="Track Codex, Cursor, and OpenCode Go usage from one compact native macOS popover." />
+    <meta property="og:image" content="/assets/ubos-screenshot.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>ubos — AI usage in your macOS menu bar</title>
+    <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <main class="mx-auto w-[min(920px,calc(100vw-48px))] px-6 py-10 pb-20">
+      <header class="mb-20 flex items-center justify-between">
+        <a class="inline-flex items-center gap-2.5 text-ink" href="/" aria-label="ubos home">
+          <img class="size-8 rounded-lg border border-line" src="/assets/app-icon.svg" alt="" />
+          <span class="text-lg font-medium tracking-[-0.03em]">ubos</span>
+        </a>
+        <a class="text-sm text-muted transition hover:text-ink" href={repoUrl}>GitHub</a>
+      </header>
+
+      <section class="mb-24 grid items-center gap-14 lg:grid-cols-[1fr_1.05fr]">
+        <div>
+          <p class="mb-4 text-sm text-muted">Native macOS menu bar app</p>
+          <h1 class="max-w-md text-[clamp(2.5rem,6vw,3.75rem)] font-medium leading-[1.05] tracking-[-0.04em] text-ink">
+            AI usage without the dashboard hop.
+          </h1>
+          <p class="mt-5 max-w-md text-base leading-relaxed text-muted">
+            One popover for Codex, Cursor, and OpenCode Go. Reads local provider state — nothing leaves your Mac.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center gap-4">
+            <a class="button button-primary" href={releaseUrl}>Download</a>
+            <a class="text-sm text-muted transition hover:text-ink" href={repoUrl}>View source</a>
+          </div>
+        </div>
+
+        <figure class="overflow-hidden rounded-2xl border border-line bg-panel">
+          <img
+            class="block w-full"
+            src="/assets/ubos-screenshot.png"
+            alt="ubos menu bar popover showing AI usage cards"
+          />
+        </figure>
+      </section>
+
+      <section class="border-t border-line pt-16">
+        <h2 class="mb-8 text-sm font-medium uppercase tracking-[0.12em] text-muted">Providers</h2>
+        <ul class="divide-y divide-line">
+          {providers.map((provider) => (
+            <li class="flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
+              <span class="text-base text-ink">{provider.name}</span>
+              <span class="text-sm text-muted sm:text-right">{provider.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <footer class="mt-20 flex flex-wrap justify-between gap-3 border-t border-line pt-8 text-sm text-muted">
+        <span>© 2026 Noel Garcia. MIT licensed.</span>
+        <a class="transition hover:text-ink" href={repoUrl}>github.com/noelrohi/ubos</a>
+      </footer>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #f2f0ec;
+  --color-muted: #8b9199;
+  --color-line: rgba(242, 240, 236, 0.1);
+  --color-panel: rgba(255, 255, 255, 0.03);
+  --color-accent: #7cc7ff;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    background: #0a0b0d;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .button {
+    @apply inline-flex items-center rounded-full border border-line px-5 py-2.5 text-sm text-ink transition hover:border-white/20;
+  }
+
+  .button-primary {
+    @apply border-transparent bg-ink font-medium text-[#0a0b0d] hover:bg-white;
+  }
+}

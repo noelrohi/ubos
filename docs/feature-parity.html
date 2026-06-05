@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ubos Feature Parity Matrix</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f14;
+      --panel: #121922;
+      --panel-2: #172231;
+      --ink: #edf4ff;
+      --muted: #8fa1b7;
+      --line: #263547;
+      --green: #66e3a1;
+      --amber: #ffd166;
+      --blue: #7cc7ff;
+      --red: #ff7d7d;
+      --violet: #bca7ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(124, 199, 255, 0.18), transparent 34rem),
+        linear-gradient(135deg, #071019 0%, var(--bg) 48%, #101017 100%);
+      color: var(--ink);
+      font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 56px 0 72px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      max-width: 880px;
+      font-size: clamp(42px, 7vw, 84px);
+      line-height: 0.9;
+      letter-spacing: -0.08em;
+      text-transform: lowercase;
+    }
+
+    h2 {
+      margin: 42px 0 14px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: var(--blue);
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+    }
+
+    .intro {
+      padding: 26px;
+      display: grid;
+      align-content: space-between;
+      min-height: 260px;
+    }
+
+    .lede {
+      max-width: 780px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .stamp {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .facts {
+      padding: 22px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .fact {
+      border-left: 3px solid var(--blue);
+      padding-left: 14px;
+    }
+
+    .fact strong {
+      display: block;
+      color: var(--ink);
+      font-size: 18px;
+    }
+
+    .fact span { color: var(--muted); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .provider {
+      padding: 20px;
+      background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    }
+
+    .provider .name {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .pill {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #051016;
+      background: var(--green);
+    }
+
+    .pill.add { background: var(--violet); }
+    .pill.partial { background: var(--amber); }
+    .pill.later { background: var(--muted); }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    li + li { margin-top: 7px; }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+    }
+
+    th, td {
+      padding: 14px 16px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #0f1721;
+      color: var(--blue);
+      text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    th:last-child, td:last-child { border-right: 0; }
+
+    td:first-child {
+      width: 220px;
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    code {
+      color: var(--amber);
+      background: rgba(255, 209, 102, 0.08);
+      border: 1px solid rgba(255, 209, 102, 0.2);
+      border-radius: 6px;
+      padding: 1px 5px;
+      font-family: inherit;
+      font-size: 0.92em;
+    }
+
+    .note {
+      margin-top: 12px;
+      padding: 14px 16px;
+      border: 1px solid rgba(124, 199, 255, 0.22);
+      border-radius: 16px;
+      color: var(--muted);
+      background: rgba(124, 199, 255, 0.07);
+    }
+
+    .status { font-weight: 800; }
+    .yes { color: var(--green); }
+    .new { color: var(--violet); }
+    .maybe { color: var(--amber); }
+    .no { color: var(--red); }
+
+    @media (max-width: 880px) {
+      main { width: min(100vw - 22px, 1180px); padding-top: 28px; }
+      header, .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+      th, td { min-width: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <section class="intro card">
+        <div>
+          <span class="stamp">source checked with gh cli on 2026-06-05</span>
+          <h1>ubos parity map</h1>
+          <p class="lede">A native Swift macOS plan for a personal OpenUsage-style menu bar app. Scope is intentionally smaller: Codex, OpenCode Go, and Cursor first.</p>
+        </div>
+      </section>
+      <aside class="facts card">
+        <div class="fact"><strong>OpenUsage v0.6.26</strong><span>Latest GitHub release inspected.</span></div>
+        <div class="fact"><strong>Tauri stack</strong><span>JavaScript plugins, TypeScript UI, Rust host.</span></div>
+        <div class="fact"><strong>Native target</strong><span>SwiftUI + AppKit menu bar app, no webview needed.</span></div>
+        <div class="fact"><strong>Codex provider</strong><span>OpenUsage uses Codex CLI OAuth and ChatGPT usage endpoints.</span></div>
+      </aside>
+    </header>
+
+    <section class="grid">
+      <article class="provider card">
+        <div class="name">Cursor <span class="pill">parity</span></div>
+        <ul>
+          <li>Read desktop SQLite auth from <code>~/Library/Application Support/Cursor/User/globalStorage/state.vscdb</code>.</li>
+          <li>Fallback to Keychain services <code>cursor-access-token</code> and <code>cursor-refresh-token</code>.</li>
+          <li>Fetch current period usage, plan info, credit grants, Stripe balance, and request fallback.</li>
+        </ul>
+      </article>
+      <article class="provider card">
+        <div class="name">OpenCode Go <span class="pill">parity</span></div>
+        <ul>
+          <li>Read local observed spend from <code>~/.local/share/opencode/opencode.db</code>.</li>
+          <li>Detect auth at <code>~/.local/share/opencode/auth.json</code>.</li>
+          <li>Show 5h, weekly, and monthly spend against fixed Go limits.</li>
+        </ul>
+      </article>
+      <article class="provider card">
+        <div class="name">Codex <span class="pill">parity</span></div>
+        <ul>
+          <li>Read Codex CLI OAuth credentials from file or Keychain.</li>
+          <li>Fetch session, weekly, review, and credits usage from <code>chatgpt.com/backend-api/wham/usage</code>.</li>
+          <li>Use local Codex logs later for token trend/detail metrics.</li>
+        </ul>
+      </article>
+    </section>
+
+    <h2>Feature Parity Matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>OpenUsage behavior</th>
+          <th>Swift ubos MVP</th>
+          <th>Status</th>
+          <th>Native macOS choice</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Menu bar presence</td>
+          <td>Lives in the menu bar with a panel for provider usage.</td>
+          <td>Menu-bar-only app with usage popover.</td>
+          <td class="status yes">Must match</td>
+          <td>Use <code>NSStatusItem</code> plus <code>NSPopover</code> for full control over icon, refresh, settings, and diagnostics.</td>
+        </tr>
+        <tr>
+          <td>Provider cards</td>
+          <td>Progress, text, badge, and bar chart metric lines from plugin output.</td>
+          <td>Hard-code three provider adapters first, then abstract if useful.</td>
+          <td class="status yes">Must match</td>
+          <td>Swift models: <code>UsageProvider</code>, <code>UsageSnapshot</code>, <code>MetricLine</code>.</td>
+        </tr>
+        <tr>
+          <td>Cursor usage</td>
+          <td>Connect RPC endpoints on <code>api2.cursor.sh</code>, plus Cursor REST and Stripe endpoints.</td>
+          <td>Mirror plugin behavior for Total usage, Credits, Auto usage, API usage, On-demand, and request fallback.</td>
+          <td class="status yes">Must match</td>
+          <td>Use <code>URLSession</code>, SQLite read-only access, and Keychain reads. Persist refreshed access token only where it was loaded.</td>
+        </tr>
+        <tr>
+          <td>OpenCode Go usage</td>
+          <td>Local SQLite query over assistant messages with numeric <code>cost</code>.</td>
+          <td>Mirror query and fixed limits: 5h $12, weekly $30, monthly $60.</td>
+          <td class="status yes">Must match</td>
+          <td>Use read-only SQLite. Show grey status badge when history is detected but database is unreadable.</td>
+        </tr>
+        <tr>
+          <td>Codex usage</td>
+          <td>Codex CLI OAuth credentials plus ChatGPT WHAM usage endpoint.</td>
+          <td>Mirror Session, Weekly, Reviews, Credits first.</td>
+          <td class="status yes">Must match</td>
+          <td>Read <code>~/.config/codex/auth.json</code>, <code>~/.codex/auth.json</code>, or Keychain service <code>Codex Auth</code>.</td>
+        </tr>
+        <tr>
+          <td>Auto refresh</td>
+          <td>Plugins probe on app load, manual refresh, and configurable timer of 5/15/30/60 minutes.</td>
+          <td>Refresh all enabled providers on launch and every 15 minutes by default.</td>
+          <td class="status yes">Must match</td>
+          <td>Use <code>Task</code> and cancellation-aware async refresh. Keep last successful snapshot if a refresh fails.</td>
+        </tr>
+        <tr>
+          <td>Manual refresh</td>
+          <td>User can retry failed providers and refresh usage.</td>
+          <td>Refresh button in popover and per-provider retry on error.</td>
+          <td class="status yes">Must match</td>
+          <td>SwiftUI button in popover. Disable while refresh is running.</td>
+        </tr>
+        <tr>
+          <td>Global shortcut</td>
+          <td>Toggle panel from anywhere with customizable keyboard shortcut.</td>
+          <td>Add after base providers work. Default can be unset to avoid collisions.</td>
+          <td class="status maybe">Phase 2</td>
+          <td>Use Carbon <code>RegisterEventHotKey</code>, not a SwiftUI keyboard shortcut, for true global behavior.</td>
+        </tr>
+        <tr>
+          <td>Settings</td>
+          <td>Provider order, enabled state, refresh interval, shortcut, proxy.</td>
+          <td>Provider toggles, refresh interval, Codex auth status, and diagnostics links.</td>
+          <td class="status maybe">Phase 2</td>
+          <td>Use a native Settings window with <code>Settings</code> scene or AppKit controller. Store non-secret prefs in <code>@AppStorage</code>.</td>
+        </tr>
+        <tr>
+          <td>Local HTTP API</td>
+          <td>Read-only server on <code>127.0.0.1:6736</code> exposes cached snapshots.</td>
+          <td>Optional. Useful if other local tools should read ubos data.</td>
+          <td class="status maybe">Phase 3</td>
+          <td>Use Network.framework or SwiftNIO only if needed. Keep loopback-only and read-only.</td>
+        </tr>
+        <tr>
+          <td>Plugin architecture</td>
+          <td>Bundled JavaScript provider plugins with host APIs for fs, HTTP, SQLite, Keychain, and ccusage.</td>
+          <td>Skip for personal app. Native adapters are simpler and safer.</td>
+          <td class="status no">Defer</td>
+          <td>A plugin host is unnecessary until external providers are a real requirement.</td>
+        </tr>
+        <tr>
+          <td>Proxy support</td>
+          <td>Provider HTTP requests can route through SOCKS5 or HTTP proxy.</td>
+          <td>Not needed for personal MVP unless your network requires it.</td>
+          <td class="status no">Defer</td>
+          <td>Add per-session <code>URLSessionConfiguration</code> proxy settings later.</td>
+        </tr>
+        <tr>
+          <td>Auto update</td>
+          <td>OpenUsage releases auto-update.</td>
+          <td>Not required for personal-only app, but easy to add before sharing.</td>
+          <td class="status no">Defer</td>
+          <td>Use Sparkle only if distributing outside your machine.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Provider Implementation Notes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Provider</th>
+          <th>Data source</th>
+          <th>Metrics</th>
+          <th>Risks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Cursor</td>
+          <td><code>state.vscdb</code>, macOS Keychain, <code>api2.cursor.sh</code>, <code>cursor.com/api/auth/stripe</code>, <code>cursor.com/api/usage</code>.</td>
+          <td>Credits, Total usage, Requests, Auto usage, API usage, On-demand.</td>
+          <td>Reverse-engineered undocumented API can change. Token refresh must be precise.</td>
+        </tr>
+        <tr>
+          <td>OpenCode Go</td>
+          <td><code>~/.local/share/opencode/opencode.db</code> and <code>auth.json</code>.</td>
+          <td>Session 5h, weekly, monthly percentage against fixed spend limits.</td>
+          <td>Local machine only. Does not know remote or other-device usage.</td>
+        </tr>
+        <tr>
+          <td>Codex</td>
+          <td>Codex auth file/keychain and <code>chatgpt.com/backend-api/wham/usage</code>.</td>
+          <td>Session, Weekly, Reviews, Credits. Later: Today, Yesterday, Last 30 Days, Usage Trend from local logs.</td>
+          <td>Reverse-engineered endpoint may change. OAuth refresh must persist to the same source.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Recommended Build Order</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>Deliverable</th>
+          <th>Why first</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Native menu bar shell with mock provider snapshots.</td>
+          <td>Locks in the macOS UX before network and auth complexity.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>OpenCode Go adapter.</td>
+          <td>Fastest real provider because it is local SQLite only.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Cursor adapter.</td>
+          <td>Highest-value parity provider, but includes token refresh and fallbacks.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Codex adapter.</td>
+          <td>Uses OpenUsage-documented OAuth and usage endpoint behavior.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Settings, shortcut, local API, polish.</td>
+          <td>Add after data correctness is proven.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="note">This plan intentionally avoids the OpenUsage plugin runtime for now. For a personal Swift app with three providers, native adapters are smaller, easier to debug, and fit macOS sandbox/keychain behavior better.</p>
+  </main>
+</body>
+</html>

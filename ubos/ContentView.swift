@@ -18,48 +18,32 @@ struct ContentView: View {
     @State private var providers = UsageSnapshot.initial
     @State private var lastRefresh = Date()
     @State private var isRefreshing = false
+    @State private var selectedProviderID = CodexUsageProvider.id
     @State private var refreshTask: Task<Void, Never>?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            header
-
-            VStack(spacing: 8) {
-                ForEach(providers) { provider in
-                    ProviderCard(snapshot: provider, isRefreshing: isRefreshing) {
-                        await refreshProvider(provider.id)
-                    }
-                }
-            }
+        HStack(spacing: 0) {
+            sidebar
 
             Divider()
 
-            HStack {
-                Button("Refresh") {
-                    Task {
-                        await refreshData()
+            VStack(alignment: .leading, spacing: 12) {
+                header
+
+                if let selectedProvider {
+                    ProviderDetailView(snapshot: selectedProvider, isRefreshing: isRefreshing) {
+                        await refreshProvider(selectedProvider.id)
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(isRefreshing)
-                .controlSize(.small)
 
-                Button("Settings") {
-                    SettingsWindowController.show()
-                }
-                .controlSize(.small)
+                Spacer(minLength: 0)
 
-                Spacer()
-
-                Button("Quit") {
-                    NSApp.terminate(nil)
-                }
-                .buttonStyle(.borderless)
-                .controlSize(.small)
+                footer
             }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
-        .frame(width: popoverWidth, alignment: .topLeading)
-        .padding(14)
+        .frame(width: popoverWidth, height: 420, alignment: .topLeading)
         .background(.regularMaterial)
         .animation(nil, value: isRefreshing)
         .animation(nil, value: providers.map(\.id))
@@ -85,21 +69,74 @@ struct ContentView: View {
         }
     }
 
+    private var sidebar: some View {
+        VStack(spacing: 10) {
+            ForEach(providers) { provider in
+                SidebarProviderButton(snapshot: provider, isSelected: provider.id == selectedProviderID) {
+                    selectedProviderID = provider.id
+                }
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, 14)
+        .frame(width: 54)
+    }
+
+    private var selectedProvider: UsageSnapshot? {
+        providers.first { $0.id == selectedProviderID } ?? providers.first
+    }
+
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text("ubos")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                Text("AI subscription usage")
-                    .font(.caption)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(selectedProvider?.name ?? "Ubos")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                Text(selectedProvider?.plan ?? "AI subscription usage")
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
             Text(lastRefresh, style: .time)
-                .font(.caption.monospacedDigit())
+                .font(.caption2.monospacedDigit())
                 .foregroundStyle(.secondary)
+        }
+    }
+
+    private var footer: some View {
+        HStack {
+            Button {
+                Task {
+                    if let selectedProvider {
+                        await refreshProvider(selectedProvider.id)
+                    } else {
+                        await refreshData()
+                    }
+                }
+            } label: {
+                Label("Refresh", systemImage: "arrow.clockwise")
+            }
+            .buttonStyle(.bordered)
+            .disabled(isRefreshing)
+            .controlSize(.small)
+
+            Button {
+                SettingsWindowController.show()
+            } label: {
+                Label("Settings", systemImage: "gearshape")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+
+            Spacer()
+
+            Button("Quit") {
+                NSApp.terminate(nil)
+            }
+            .buttonStyle(.borderless)
+            .controlSize(.small)
         }
     }
 
@@ -171,46 +208,53 @@ struct ContentView: View {
     }
 }
 
-struct ProviderCard: View {
+struct SidebarProviderButton: View {
+    let snapshot: UsageSnapshot
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            BrandIconView(snapshot: snapshot)
+                .frame(width: 26, height: 26)
+                .padding(6)
+                .background {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(isSelected ? Color.accentColor.opacity(0.14) : Color.clear)
+                }
+                .overlay(alignment: .leading) {
+                    if isSelected {
+                        Capsule(style: .continuous)
+                            .fill(Color.accentColor)
+                            .frame(width: 3, height: 18)
+                            .offset(x: -8)
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+        .help(snapshot.name)
+    }
+}
+
+struct ProviderDetailView: View {
     let snapshot: UsageSnapshot
     let isRefreshing: Bool
     let retry: () async -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                BrandIconView(snapshot: snapshot)
-
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(snapshot.name)
-                        .font(.subheadline.weight(.semibold))
-                    Text(snapshot.plan)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                StatusDot(color: snapshot.statusColor, isPulsing: snapshot.status == "loading" || isRefreshing)
-                    .help(statusHelp)
-            }
-
-            if showsSkeleton {
-                LoadingMetricSkeleton()
-            } else if let message = snapshot.message {
+        VStack(alignment: .leading, spacing: 14) {
+            if let message = snapshot.message, !snapshot.hasUsageData, snapshot.status != "loading" {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text(message)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                        .lineLimit(2)
+                        .lineLimit(3)
 
                     Spacer()
 
                     if snapshot.canRetry {
                         Button("Retry") {
-                            Task {
-                                await retry()
-                            }
+                            Task { await retry() }
                         }
                         .buttonStyle(.borderless)
                         .font(.caption2.weight(.semibold))
@@ -218,118 +262,21 @@ struct ProviderCard: View {
                 }
             }
 
-            if !showsSkeleton {
-                VStack(spacing: 6) {
+            if snapshot.hasUsageData {
+                VStack(spacing: 14) {
                     ForEach(visibleLines) { line in
                         MetricLineView(line: line, color: snapshot.color)
                     }
                 }
-                .opacity(isRefreshing && snapshot.hasUsageData ? 0.55 : 1)
+                .opacity(isRefreshing ? 0.55 : 1)
             }
         }
-        .padding(10)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(.separator.opacity(0.5), lineWidth: 1)
-        }
-    }
-
-    private var showsSkeleton: Bool {
-        snapshot.status == "loading" && !snapshot.hasUsageData
     }
 
     private var visibleLines: [MetricLine] {
         snapshot.lines.filter { line in
             line.label != "Requests" && line.label != "Reviews"
         }
-    }
-
-    private var statusHelp: String {
-        if isRefreshing { return "Updating..." }
-        return snapshot.status
-    }
-}
-
-struct LoadingMetricSkeleton: View {
-    var body: some View {
-        VStack(spacing: 6) {
-            SkeletonMetricLine(labelWidth: 56, valueWidth: 34, progressWidth: 0.86)
-            SkeletonMetricLine(labelWidth: 68, valueWidth: 28, progressWidth: 0.72)
-            SkeletonMetricLine(labelWidth: 50, valueWidth: 30, progressWidth: 0.44)
-        }
-        .accessibilityLabel("Loading usage")
-    }
-}
-
-struct SkeletonMetricLine: View {
-    let labelWidth: CGFloat
-    let valueWidth: CGFloat
-    let progressWidth: CGFloat
-
-    var body: some View {
-        HStack(spacing: 8) {
-            SkeletonBar(width: labelWidth, height: 8)
-                .frame(width: 74, alignment: .leading)
-
-            GeometryReader { proxy in
-                SkeletonBar(width: max(24, proxy.size.width * progressWidth), height: 5)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .frame(height: proxy.size.height)
-            }
-            .frame(height: 5)
-
-            SkeletonBar(width: valueWidth, height: 8)
-                .frame(minWidth: 58, alignment: .trailing)
-        }
-        .frame(height: 16)
-    }
-}
-
-struct SkeletonBar: View {
-    let width: CGFloat
-    let height: CGFloat
-
-    @State private var isDimmed = false
-
-    var body: some View {
-        Capsule(style: .continuous)
-            .fill(.tertiary.opacity(isDimmed ? 0.42 : 0.72))
-            .frame(width: width, height: height)
-            .onAppear {
-                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
-                    isDimmed = true
-                }
-            }
-    }
-}
-
-struct StatusDot: View {
-    let color: Color
-    let isPulsing: Bool
-
-    @State private var isDimmed = false
-
-    var body: some View {
-        Circle()
-            .fill(color)
-            .frame(width: 7, height: 7)
-            .opacity(isPulsing ? (isDimmed ? 0.35 : 1) : 1)
-            .onAppear {
-                guard isPulsing else { return }
-                withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
-                    isDimmed = true
-                }
-            }
-            .onChange(of: isPulsing) { _, newValue in
-                if newValue {
-                    withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
-                        isDimmed = true
-                    }
-                } else {
-                    isDimmed = false
-                }
-            }
     }
 }
 
@@ -373,39 +320,43 @@ struct MetricLineView: View {
     let color: Color
 
     var body: some View {
-        HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(line.label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(width: 74, alignment: .leading)
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(.primary)
                 .lineLimit(1)
 
             if line.showsProgress {
-                ProgressView(value: displayedValue, total: line.limit)
-                    .tint(color)
-                    .progressViewStyle(.linear)
-                    .frame(height: 5)
-                    .help(helpText)
-            } else {
-                Spacer(minLength: 0)
+                GeometryReader { proxy in
+                    ZStack(alignment: .leading) {
+                        Capsule(style: .continuous)
+                            .fill(Color(nsColor: .quaternaryLabelColor).opacity(0.18))
+
+                        Capsule(style: .continuous)
+                            .fill(progressFill)
+                            .frame(width: max(0, min(proxy.size.width, proxy.size.width * progressFraction)))
+                    }
+                }
+                .frame(height: 14)
+                .help(helpText)
             }
 
-            VStack(alignment: .trailing, spacing: 1) {
+            HStack(alignment: .firstTextBaseline) {
                 Text(displayedValueText)
-                    .font(.caption.monospacedDigit().weight(.semibold))
-                    .foregroundStyle(.primary)
+                    .font(.system(size: 13, weight: .medium, design: .rounded).monospacedDigit())
+                    .foregroundStyle(.secondary)
                     .lineLimit(1)
+
+                Spacer(minLength: 12)
 
                 if let resetText = line.resetText, !resetText.isEmpty {
                     Text(resetText)
-                        .font(.caption2)
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
             }
-            .frame(minWidth: 104, alignment: .trailing)
         }
-        .frame(minHeight: line.resetText == nil ? 16 : 28)
         .help(helpText)
     }
 
@@ -420,6 +371,15 @@ struct MetricLineView: View {
         case .remaining:
             max(0, line.limit - line.used)
         }
+    }
+
+    private var progressFraction: CGFloat {
+        guard line.limit > 0 else { return 0 }
+        return CGFloat(min(1, max(0, displayedValue / line.limit)))
+    }
+
+    private var progressFill: Color {
+        Color(nsColor: .controlAccentColor)
     }
 
     private var displayedValueText: String {

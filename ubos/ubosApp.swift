@@ -33,7 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 private final class StatusBarController: NSObject, NSPopoverDelegate {
     private let statusItem: NSStatusItem
     private let popover: NSPopover
-    private let popoverSize = NSSize(width: 388, height: 500)
+    private let popoverSize = NSSize(width: 360, height: 420)
     private var globalEventMonitor: Any?
     private var localEventMonitor: Any?
 
@@ -50,18 +50,42 @@ private final class StatusBarController: NSObject, NSPopoverDelegate {
     private func configureStatusItem() {
         guard let button = statusItem.button else { return }
 
-        if let image = NSImage(systemSymbolName: "chart.bar.xaxis", accessibilityDescription: "ubos") {
-            image.size = NSSize(width: 18, height: 18)
-            image.isTemplate = true
-            button.image = image
-            button.imagePosition = .imageOnly
-        } else {
-            button.title = "ubos"
-        }
+        let image = Self.makeMenuBarIcon()
+        image.isTemplate = true
+        button.image = image
+        button.imagePosition = .imageOnly
 
         button.target = self
         button.action = #selector(togglePopover(_:))
         button.sendAction(on: [.leftMouseDown, .rightMouseDown])
+    }
+
+    private static func makeMenuBarIcon() -> NSImage {
+        let size = NSSize(width: 18, height: 18)
+        let image = NSImage(size: size)
+
+        image.lockFocus()
+        NSColor.black.setStroke()
+        NSColor.black.setFill()
+
+        let path = NSBezierPath()
+        path.lineWidth = 2.4
+        path.lineCapStyle = .round
+        path.lineJoinStyle = .round
+        path.move(to: NSPoint(x: 4.5, y: 12.7))
+        path.line(to: NSPoint(x: 4.5, y: 7.0))
+        path.curve(
+            to: NSPoint(x: 13.5, y: 7.0),
+            controlPoint1: NSPoint(x: 4.5, y: 2.9),
+            controlPoint2: NSPoint(x: 13.5, y: 2.9)
+        )
+        path.line(to: NSPoint(x: 13.5, y: 12.7))
+        path.stroke()
+
+        NSBezierPath(ovalIn: NSRect(x: 10.1, y: 6.1, width: 3.2, height: 3.2)).fill()
+        image.unlockFocus()
+
+        return image
     }
 
     private func configurePopover() {

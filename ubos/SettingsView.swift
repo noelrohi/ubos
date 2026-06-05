@@ -212,7 +212,7 @@ private struct GeneralSettingsPane: View {
                     isOn: $codexEnabled
                 )
 
-                Text("Provider data stays local to this Mac. ubos reads local app files, macOS Keychain entries, and provider usage APIs directly.")
+                Text("Provider data stays local to this Mac. Ubos reads local app files, macOS Keychain entries, and provider usage APIs directly.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -247,7 +247,7 @@ private struct GeneralSettingsPane: View {
             Section("Privacy") {
                 LabeledContent("Storage", value: "UserDefaults for preferences, Keychain for token writes")
                 LabeledContent("Network", value: "Provider APIs only")
-                Text("ubos does not run a local server or send provider data to a third-party analytics service.")
+                Text("Ubos does not run a local server or send provider data to a third-party analytics service.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -282,7 +282,7 @@ private struct CodexSettingsPane: View {
 
                 LabeledContent("Auth source", value: authStatus)
 
-                Text("ubos reads the same Codex CLI OAuth credentials as OpenUsage. Run `codex` if authentication is missing or expired.")
+                Text("Ubos reads the same Codex CLI OAuth credentials as OpenUsage. Run `codex` if authentication is missing or expired.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -307,7 +307,7 @@ private struct AboutSettingsPane: View {
 
     var body: some View {
         Form {
-            Section("ubos") {
+            Section("Ubos") {
                 LabeledContent("Version", value: AppVersion.displayString)
                 LabeledContent("Providers", value: "OpenCode Go, Cursor, Codex")
             }

@@ -1,6 +1,6 @@
 # ubos
 
-![ubos](docs/assets/ubos-screenshot.png)
+![ubos](docs/assets/ubos-screenshot.webp)
 
 Native macOS menu bar usage tracking for AI coding subscriptions.
 

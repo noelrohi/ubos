@@ -5,6 +5,18 @@
     <description>Most recent changes for ubos.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.5 (Build 6)</title>
+      <pubDate>Fri, 05 Jun 2026 22:25:22 +0800</pubDate>
+      <sparkle:version>6</sparkle:version>
+      <sparkle:shortVersionString>1.0.5</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.2</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Fixes Sparkle update installation for the sandboxed app by adding required installer communication entitlements.</li></ul>]]></description>
+      <enclosure url="https://github.com/noelrohi/ubos/releases/download/v1.0.5/ubos-1.0.5.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="ClYul7UnI0CmwAP2AhjumNV2EB9qZWwxbRZ1xqSQSEvHV714FTalZIHIl8jPKZ5u1cgP5E0/0BBgTsA/6hLpDA=="
+                 length="1453196" />
+    </item>
+    <item>
       <title>Version 1.0.4 (Build 5)</title>
       <pubDate>Fri, 05 Jun 2026 22:20:02 +0800</pubDate>
       <sparkle:version>5</sparkle:version>

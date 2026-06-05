@@ -5,6 +5,18 @@
     <description>Most recent changes for ubos.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.4 (Build 5)</title>
+      <pubDate>Fri, 05 Jun 2026 22:20:02 +0800</pubDate>
+      <sparkle:version>5</sparkle:version>
+      <sparkle:shortVersionString>1.0.4</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.2</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Adds skeleton placeholders while menu bar popover usage data is loading.</li></ul>]]></description>
+      <enclosure url="https://github.com/noelrohi/ubos/releases/download/v1.0.4/ubos-1.0.4.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="wRT22cLwMchDgM6cVPf+So5QpdabjxFGb3zx+IrwXfWabu4Ct8tY6zSOfElpn09L/SijoQjCXhxJZ912+CCnDw=="
+                 length="1453117" />
+    </item>
+    <item>
       <title>Version 1.0.3 (Build 4)</title>
       <pubDate>Fri, 05 Jun 2026 22:13:39 +0800</pubDate>
       <sparkle:version>4</sparkle:version>

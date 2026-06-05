@@ -243,32 +243,36 @@ struct ProviderDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            if let message = snapshot.message, !snapshot.hasUsageData, snapshot.status != "loading" {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Text(message)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(3)
+            if snapshot.status == "loading", !snapshot.hasUsageData {
+                ProviderDetailSkeletonView()
+            } else {
+                if let message = snapshot.message, !snapshot.hasUsageData {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(message)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(3)
 
-                    Spacer()
+                        Spacer()
 
-                    if snapshot.canRetry {
-                        Button("Retry") {
-                            Task { await retry() }
+                        if snapshot.canRetry {
+                            Button("Retry") {
+                                Task { await retry() }
+                            }
+                            .buttonStyle(.borderless)
+                            .font(.caption2.weight(.semibold))
                         }
-                        .buttonStyle(.borderless)
-                        .font(.caption2.weight(.semibold))
                     }
                 }
-            }
 
-            if snapshot.hasUsageData {
-                VStack(spacing: 14) {
-                    ForEach(visibleLines) { line in
-                        MetricLineView(line: line, color: snapshot.color)
+                if snapshot.hasUsageData {
+                    VStack(spacing: 14) {
+                        ForEach(visibleLines) { line in
+                            MetricLineView(line: line, color: snapshot.color)
+                        }
                     }
+                    .opacity(isRefreshing ? 0.55 : 1)
                 }
-                .opacity(isRefreshing ? 0.55 : 1)
             }
         }
     }
@@ -277,6 +281,36 @@ struct ProviderDetailView: View {
         snapshot.lines.filter { line in
             line.label != "Requests" && line.label != "Reviews"
         }
+    }
+}
+
+struct ProviderDetailSkeletonView: View {
+    var body: some View {
+        VStack(spacing: 14) {
+            ForEach(0..<3, id: \.self) { index in
+                VStack(alignment: .leading, spacing: 8) {
+                    skeletonBar(width: index == 1 ? 92 : 120, height: 18)
+
+                    skeletonBar(width: nil, height: 14)
+
+                    HStack {
+                        skeletonBar(width: index == 2 ? 86 : 118, height: 14)
+
+                        Spacer(minLength: 12)
+
+                        skeletonBar(width: index == 0 ? 112 : 76, height: 14)
+                    }
+                }
+            }
+        }
+        .redacted(reason: .placeholder)
+        .accessibilityLabel("Loading usage data")
+    }
+
+    private func skeletonBar(width: CGFloat?, height: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: height / 2, style: .continuous)
+            .fill(Color(nsColor: .quaternaryLabelColor).opacity(0.28))
+            .frame(width: width, height: height)
     }
 }
 

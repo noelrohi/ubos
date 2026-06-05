@@ -1,0 +1,7 @@
+{
+  "app_name": "ubos",
+  "github_repo": "noelrohi/ubos",
+  "min_system_version": "26.2",
+  "git_branch": "main",
+  "appcast_file": "appcast.xml"
+}

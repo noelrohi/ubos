@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create macOS Release"
+  short_description: "Build, notarize, tag, and publish a macOS release"
+  default_prompt: "Use $create-macos-release to build, notarize, tag, and publish a GitHub release."

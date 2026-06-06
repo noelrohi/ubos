@@ -6,7 +6,7 @@ Native macOS menu bar usage tracking for AI coding subscriptions.
 
 `ubos` gives developers one compact popover for checking Codex, Cursor, and OpenCode Go usage without opening multiple dashboards. It reads local provider state, refreshes automatically, and presents quota, credits, spend, reset timing, and status in a polished SwiftUI/AppKit menu bar experience.
 
-This is a personal macOS app informed by an OpenUsage-style feature parity study in [`docs/feature-parity.html`](docs/feature-parity.html). The provider behavior and quota logic intentionally focus on the subset useful for personal day-to-day usage rather than recreating OpenUsage as a full cross-platform product.
+`ubos` began as a personal macOS app informed by an OpenUsage-style feature parity study in [`docs/feature-parity.html`](docs/feature-parity.html). The provider behavior and quota logic intentionally focus on the subset useful for day-to-day developer usage rather than recreating OpenUsage as a full cross-platform product.
 
 ## Install
 
@@ -114,7 +114,7 @@ Xcode file-system synchronized groups are enabled, so files added under `ubos/`,
 
 ## Notes
 
-`ubos` is built for personal use. It borrows the practical provider logic mapped in `docs/feature-parity.html`, but it does not embed the OpenUsage plugin runtime, proxy system, or full product surface. Native Swift adapters are smaller, easier to debug, and better aligned with macOS sandbox and Keychain behavior for this scope.
+`ubos` is intentionally scoped as a focused native macOS utility rather than a full OpenUsage replacement. It borrows the practical provider logic mapped in `docs/feature-parity.html`, but it does not embed the OpenUsage plugin runtime, proxy system, or full product surface. Native Swift adapters are smaller, easier to debug, and better aligned with macOS sandbox and Keychain behavior for this scope.
 
 ## Release behavior
 

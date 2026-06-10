@@ -5,6 +5,18 @@
     <description>Most recent changes for ubos.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.9 (Build 10)</title>
+      <pubDate>Wed, 10 Jun 2026 21:01:41 +0800</pubDate>
+      <sparkle:version>10</sparkle:version>
+      <sparkle:shortVersionString>1.0.9</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.2</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Updates the Claude and Codex usage page links to open the right provider pages directly.</li></ul>]]></description>
+      <enclosure url="https://github.com/noelrohi/ubos/releases/download/v1.0.9/ubos-1.0.9.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="rp8blQcjri+uIKAzSzJaJxSoJYGkFnbA4lxO6/O3HmuutrB9zwOTk4CuPS7hMFXOBuJefhvtZXMMNoqsFA83Cg=="
+                 length="1578442" />
+    </item>
+    <item>
       <title>Version 1.0.8 (Build 9)</title>
       <pubDate>Wed, 10 Jun 2026 20:53:57 +0800</pubDate>
       <sparkle:version>9</sparkle:version>

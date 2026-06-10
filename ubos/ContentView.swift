@@ -196,11 +196,11 @@ struct ContentView: View {
     private func usageURL(for providerID: String) -> URL? {
         switch providerID {
         case ClaudeCodeUsageProvider.id:
-            return URL(string: "https://claude.ai/settings/usage")
+            return URL(string: "https://claude.ai/new#settings/usage")
         case CursorUsageProvider.id:
             return URL(string: "https://cursor.com/dashboard")
         case CodexUsageProvider.id:
-            return URL(string: "https://chatgpt.com/#settings/Subscription")
+            return URL(string: "https://chatgpt.com/codex/cloud/settings/usage")
         case OpenCodeGoUsageProvider.id:
             return URL(string: "https://opencode.ai/billing")
         default:

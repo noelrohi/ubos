@@ -172,6 +172,10 @@ Validate:
 xmllint --noout appcast.xml
 ```
 
+## Release Notes
+
+Keep release notes user-facing, concise, and non-technical. Mention what changed in product terms rather than implementation details. Avoid phrases like endpoint names, OAuth internals, signing details, file paths, or framework/library names unless the release is specifically for developers. Prefer 1-3 bullets, e.g. "Claude Code now shows session and weekly limits" instead of "Uses Anthropic OAuth usage endpoint parity with OpenUsage".
+
 ## Commit, Tag, Publish
 
 Commit the version bump and appcast together:

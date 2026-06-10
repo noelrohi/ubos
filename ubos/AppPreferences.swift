@@ -8,6 +8,8 @@ enum AppPreferences {
     static let cursorEnabledKey = "cursorEnabled"
     static let codexEnabledKey = "codexEnabled"
     static let claudeCodeEnabledKey = "claudeCodeEnabled"
+    static let menuBarDisplayStyleKey = "menuBarDisplayStyle"
+    static let selectedProviderIDKey = "selectedProviderID"
 
     static var refreshIntervalMinutes: Int {
         let stored = UserDefaults.standard.integer(forKey: refreshIntervalMinutesKey)

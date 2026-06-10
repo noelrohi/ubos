@@ -36,6 +36,7 @@ private final class StatusBarController: NSObject, NSPopoverDelegate {
     private let popoverSize = NSSize(width: 360, height: 420)
     private var globalEventMonitor: Any?
     private var localEventMonitor: Any?
+    private var selectedSnapshot: UsageSnapshot?
 
     override init() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -45,19 +46,92 @@ private final class StatusBarController: NSObject, NSPopoverDelegate {
 
         configureStatusItem()
         configurePopover()
+        observeMenuBarUpdates()
     }
 
     private func configureStatusItem() {
         guard let button = statusItem.button else { return }
 
-        let image = Self.makeMenuBarIcon()
-        image.isTemplate = true
-        button.image = image
-        button.imagePosition = .imageOnly
-
         button.target = self
         button.action = #selector(togglePopover(_:))
         button.sendAction(on: [.leftMouseDown, .rightMouseDown])
+        updateStatusItemDisplay()
+    }
+
+    private func observeMenuBarUpdates() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(selectedSnapshotDidChange(_:)),
+            name: .ubosSelectedUsageSnapshotDidChange,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(defaultsDidChange(_:)),
+            name: UserDefaults.didChangeNotification,
+            object: nil
+        )
+    }
+
+    @objc private func selectedSnapshotDidChange(_ notification: Notification) {
+        selectedSnapshot = notification.object as? UsageSnapshot
+        updateStatusItemDisplay()
+    }
+
+    @objc private func defaultsDidChange(_ notification: Notification) {
+        updateStatusItemDisplay()
+    }
+
+    private func updateStatusItemDisplay() {
+        guard let button = statusItem.button else { return }
+        let style = MenuBarDisplayStyle(rawValue: UserDefaults.standard.string(forKey: AppPreferences.menuBarDisplayStyleKey) ?? "") ?? .icon
+
+        switch style {
+        case .icon:
+            statusItem.length = NSStatusItem.squareLength
+            let image = Self.makeMenuBarIcon()
+            image.isTemplate = true
+            button.image = image
+            button.imagePosition = .imageOnly
+            button.title = ""
+        case .percentage:
+            statusItem.length = NSStatusItem.variableLength
+            let image = menuBarProviderIcon() ?? Self.makeMenuBarIcon()
+            image.isTemplate = true
+            button.image = image
+            button.imagePosition = .imageLeft
+            button.title = " " + menuBarPercentageText()
+            button.font = .monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .semibold)
+        }
+    }
+
+    private func menuBarPercentageText() -> String {
+        guard let line = selectedSnapshot?.lines.first(where: { $0.showsProgress }) else { return "--%" }
+        let displayMode = UsageDisplayMode(rawValue: UserDefaults.standard.string(forKey: AppPreferences.usageDisplayModeKey) ?? "") ?? .used
+        let value: Double
+        switch displayMode {
+        case .used:
+            value = line.used
+        case .remaining:
+            value = max(0, line.limit - line.used)
+        }
+        return Self.percentText(value)
+    }
+
+    private func menuBarProviderIcon() -> NSImage? {
+        guard let iconName = selectedSnapshot?.iconName,
+              let image = NSImage(named: iconName) else { return nil }
+        image.size = NSSize(width: 16, height: 16)
+        return image
+    }
+
+    private static func percentText(_ value: Double) -> String {
+        if value > 0, value < 10 {
+            let rounded = (value * 10).rounded() / 10
+            if rounded == rounded.rounded() { return "\(Int(rounded))%" }
+            return "\(String(format: "%.1f", rounded))%"
+        }
+        return "\(Int(value.rounded()))%"
     }
 
     private static func makeMenuBarIcon() -> NSImage {

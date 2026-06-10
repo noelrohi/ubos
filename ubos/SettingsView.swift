@@ -189,6 +189,7 @@ private struct ProviderToggleRow: View {
 private struct GeneralSettingsPane: View {
     @AppStorage(AppPreferences.refreshIntervalMinutesKey) private var refreshIntervalMinutes = 15
     @AppStorage(AppPreferences.usageDisplayModeKey) private var usageDisplayMode = UsageDisplayMode.used.rawValue
+    @AppStorage(AppPreferences.menuBarDisplayStyleKey) private var menuBarDisplayStyle = MenuBarDisplayStyle.icon.rawValue
     @AppStorage(AppPreferences.openCodeGoEnabledKey) private var openCodeGoEnabled = true
     @AppStorage(AppPreferences.cursorEnabledKey) private var cursorEnabled = true
     @AppStorage(AppPreferences.codexEnabledKey) private var codexEnabled = true
@@ -238,6 +239,17 @@ private struct GeneralSettingsPane: View {
             }
 
             Section("Display") {
+                Picker("Menu bar", selection: $menuBarDisplayStyle) {
+                    ForEach(MenuBarDisplayStyle.allCases) { style in
+                        Text(style.title).tag(style.rawValue)
+                    }
+                }
+                .pickerStyle(.segmented)
+
+                Text("Icon keeps the menu bar compact. Usage % shows the selected provider's first quota as used or remaining, based on the setting below.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
                 Picker("Usage display", selection: $usageDisplayMode) {
                     ForEach(UsageDisplayMode.allCases) { mode in
                         Text(mode.title).tag(mode.rawValue)

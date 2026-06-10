@@ -5,6 +5,18 @@
     <description>Most recent changes for ubos.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.10 (Build 11)</title>
+      <pubDate>Wed, 10 Jun 2026 22:14:32 +0800</pubDate>
+      <sparkle:version>11</sparkle:version>
+      <sparkle:shortVersionString>1.0.10</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.2</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Adds an optional menu bar usage percentage with the selected provider icon.</li><li>Adds a setting to choose between the compact icon and usage percentage display.</li></ul>]]></description>
+      <enclosure url="https://github.com/noelrohi/ubos/releases/download/v1.0.10/ubos-1.0.10.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="nq57s9UFSpcVWWIj/9eeukT1F83kunSYsJE/TDtn4yvL41Lz9rYTinM3EMPvZIi82JsFBy4TBcO45TabW6t2AQ=="
+                 length="1589649" />
+    </item>
+    <item>
       <title>Version 1.0.9 (Build 10)</title>
       <pubDate>Wed, 10 Jun 2026 21:01:41 +0800</pubDate>
       <sparkle:version>10</sparkle:version>

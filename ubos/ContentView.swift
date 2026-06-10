@@ -20,7 +20,7 @@ struct ContentView: View {
     @State private var lastRefresh = Date()
     @State private var nextRefresh = Date().addingTimeInterval(15 * 60)
     @State private var isRefreshing = false
-    @State private var selectedProviderID = CodexUsageProvider.id
+    @AppStorage(AppPreferences.selectedProviderIDKey) private var selectedProviderID = CodexUsageProvider.id
     @State private var refreshTask: Task<Void, Never>?
 
     var body: some View {
@@ -84,6 +84,9 @@ struct ContentView: View {
             selectFirstVisibleProviderIfNeeded()
             if isEnabled { Task { await refreshProvider(ClaudeCodeUsageProvider.id) } }
         }
+        .onChange(of: selectedProviderID) { _, _ in
+            publishMenuBarSnapshot()
+        }
     }
 
     private var sidebar: some View {
@@ -91,6 +94,7 @@ struct ContentView: View {
             ForEach(visibleProviders) { provider in
                 SidebarProviderButton(snapshot: provider, isSelected: provider.id == selectedProviderID) {
                     selectedProviderID = provider.id
+                    publishMenuBarSnapshot()
                 }
             }
 
@@ -208,6 +212,11 @@ struct ContentView: View {
         }
     }
 
+    private func publishMenuBarSnapshot() {
+        guard let selectedProvider else { return }
+        NotificationCenter.default.post(name: .ubosSelectedUsageSnapshotDidChange, object: selectedProvider)
+    }
+
     private func refreshData() async {
         guard !isRefreshing else { return }
 
@@ -233,6 +242,7 @@ struct ContentView: View {
             guard let update = updates.first(where: { $0.id == snapshot.id }) else { return snapshot }
             return mergedSnapshot(current: snapshot, update: update)
         }
+        publishMenuBarSnapshot()
     }
 
     private func refreshAfterPopoverAppears() async {
@@ -260,6 +270,7 @@ struct ContentView: View {
             current.id == id ? mergedSnapshot(current: current, update: snapshot) : current
         }
         lastRefresh = Date()
+        publishMenuBarSnapshot()
     }
 
     private func mergedSnapshot(current: UsageSnapshot, update: UsageSnapshot) -> UsageSnapshot {
@@ -516,6 +527,20 @@ struct MetricLineView: View {
     }
 }
 
+enum MenuBarDisplayStyle: String, CaseIterable, Identifiable {
+    case icon
+    case percentage
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .icon: "Icon"
+        case .percentage: "Usage %"
+        }
+    }
+}
+
 enum UsageDisplayMode: String, CaseIterable, Identifiable {
     case remaining
     case used
@@ -723,6 +748,10 @@ struct MetricLine: Identifiable {
             return ""
         }
     }
+}
+
+extension Notification.Name {
+    static let ubosSelectedUsageSnapshotDidChange = Notification.Name("ubosSelectedUsageSnapshotDidChange")
 }
 
 #Preview {

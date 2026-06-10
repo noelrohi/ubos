@@ -53,7 +53,7 @@ enum ClaudeCodeUsageProvider {
 
     private static func appendWindow(_ lines: inout [MetricLine], label: String, window: ClaudeOAuthWindow?, now: Date) {
         guard let utilization = window?.utilization else { return }
-        lines.append(MetricLine(label: label, used: utilization, limit: 100, format: .percent, resetText: window?.resetsAt.map { "Resets in \(duration(from: now, to: $0))" }))
+        lines.append(MetricLine(label: label, used: utilization, limit: 100, format: .percent, resetText: window?.resetsAt.map { resetText(from: now, to: $0) }))
     }
 
     private static func localUsageRecords() -> [Record] {
@@ -158,6 +158,12 @@ enum ClaudeCodeUsageProvider {
     private static func money(_ value: Double) -> String { String(format: "%.2f", value) }
     private static func tokens(_ value: Int) -> String { let v = Double(value); if v >= 1_000_000_000 { return String(format: "%.1fB", v / 1_000_000_000) }; if v >= 1_000_000 { return String(format: "%.1fM", v / 1_000_000) }; if v >= 1_000 { return String(format: "%.1fK", v / 1_000) }; return "\(value)" }
     private static func duration(from start: Date, to end: Date) -> String { let s = max(0, Int(end.timeIntervalSince(start))); let h = s / 3600; let m = (s % 3600) / 60; return h > 0 ? "\(h)h \(m)m" : "\(m)m" }
+    private static func resetText(from start: Date, to end: Date) -> String {
+        if end.timeIntervalSince(start) >= 24 * 60 * 60 {
+            return "Resets " + end.formatted(.dateTime.weekday(.abbreviated).hour().minute())
+        }
+        return "Resets in \(duration(from: start, to: end))"
+    }
 
     private struct Record { let timestamp: Date; let model: String; let usage: JSONLUsage; let dedupKey: String?; var hasUsage: Bool { usage.inputTokens + usage.outputTokens + usage.cacheReadInputTokens + usage.cacheCreationInputTokens > 0 } }
     private struct Aggregate { var input = 0; var output = 0; var cacheRead = 0; var cacheCreate = 0; var messages = 0; var cost = 0.0; var tokens: Int { input + output + cacheRead + cacheCreate } }

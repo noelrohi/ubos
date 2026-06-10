@@ -239,7 +239,7 @@
         <div>
           <span class="stamp">source checked with gh cli on 2026-06-05</span>
           <h1>ubos parity map</h1>
-          <p class="lede">A native Swift macOS plan for a personal OpenUsage-style menu bar app. Scope is intentionally smaller: Codex, OpenCode Go, and Cursor first.</p>
+          <p class="lede">A native Swift macOS plan for a personal OpenUsage-style menu bar app. Scope is intentionally smaller: Claude Code, Codex, OpenCode Go, and Cursor first.</p>
         </div>
       </section>
       <aside class="facts card">
@@ -251,6 +251,14 @@
     </header>
 
     <section class="grid">
+      <article class="provider card">
+        <div class="name">Claude Code <span class="pill">partial parity</span></div>
+        <ul>
+          <li>Read local transcripts from <code>~/.claude/projects/**/*.jsonl</code>.</li>
+          <li>Compute 5h billing block, today tokens/cost, and trailing 7-day tokens/cost.</li>
+          <li>Costs are API-equivalent estimates, not Claude Pro/Max subscription billing.</li>
+        </ul>
+      </article>
       <article class="provider card">
         <div class="name">Cursor <span class="pill">parity</span></div>
         <ul>
@@ -302,6 +310,13 @@
           <td>Hard-code three provider adapters first, then abstract if useful.</td>
           <td class="status yes">Must match</td>
           <td>Swift models: <code>UsageProvider</code>, <code>UsageSnapshot</code>, <code>MetricLine</code>.</td>
+        </tr>
+        <tr>
+          <td>Claude Code usage</td>
+          <td>Reads Claude Code local JSONL transcripts and computes daily usage, model tokens, 5h billing blocks, burn rate, and API-equivalent cost estimates. Optional browser-session Usage API can expose organization-level usage.</td>
+          <td>Read local JSONL transcripts first. Show 5h block progress, today tokens/cost, and trailing 7-day tokens/cost. Skip optional browser-cookie Usage API for now.</td>
+          <td class="status maybe">Partial</td>
+          <td>Use read-only filesystem access under <code>~/.claude/projects</code>. Avoid decrypting Claude desktop cookies until org-wide/external usage is needed.</td>
         </tr>
         <tr>
           <td>Cursor usage</td>
@@ -395,6 +410,12 @@
       </thead>
       <tbody>
         <tr>
+          <td>Claude Code</td>
+          <td><code>~/.claude/projects/**/*.jsonl</code>. Later: <code>~/.claude.json</code>, <code>~/.claude/settings.json</code>, and optional <code>claude.ai/api/organizations/{org_uuid}/usage</code>.</td>
+          <td>5h block, today tokens/cost, weekly tokens/cost. Later: per-model rows, account/subscription metadata, org usage.</td>
+          <td>Local machine only for MVP. API-equivalent costs do not equal subscription charges. Optional org usage requires Claude browser session cookies.</td>
+        </tr>
+        <tr>
           <td>Cursor</td>
           <td><code>state.vscdb</code>, macOS Keychain, <code>api2.cursor.sh</code>, <code>cursor.com/api/auth/stripe</code>, <code>cursor.com/api/usage</code>.</td>
           <td>Credits, Total usage, Requests, Auto usage, API usage, On-demand.</td>
@@ -432,8 +453,8 @@
         </tr>
         <tr>
           <td>2</td>
-          <td>OpenCode Go adapter.</td>
-          <td>Fastest real provider because it is local SQLite only.</td>
+          <td>OpenCode Go and Claude Code local adapters.</td>
+          <td>Fastest real providers because they are local file/SQLite only.</td>
         </tr>
         <tr>
           <td>3</td>

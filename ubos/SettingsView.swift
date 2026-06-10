@@ -192,6 +192,7 @@ private struct GeneralSettingsPane: View {
     @AppStorage(AppPreferences.openCodeGoEnabledKey) private var openCodeGoEnabled = true
     @AppStorage(AppPreferences.cursorEnabledKey) private var cursorEnabled = true
     @AppStorage(AppPreferences.codexEnabledKey) private var codexEnabled = true
+    @AppStorage(AppPreferences.claudeCodeEnabledKey) private var claudeCodeEnabled = true
 
     var body: some View {
         Form {
@@ -210,6 +211,11 @@ private struct GeneralSettingsPane: View {
                     title: "Codex",
                     description: "Reads Codex CLI OAuth credentials and WHAM usage.",
                     isOn: $codexEnabled
+                )
+                ProviderToggleRow(
+                    title: "Claude Code",
+                    description: "Reads local Claude Code JSONL transcripts from ~/.claude/projects.",
+                    isOn: $claudeCodeEnabled
                 )
 
                 Text("Provider data stays local to this Mac. Ubos reads local app files, macOS Keychain entries, and provider usage APIs directly.")
@@ -309,7 +315,7 @@ private struct AboutSettingsPane: View {
         Form {
             Section("Ubos") {
                 LabeledContent("Version", value: AppVersion.displayString)
-                LabeledContent("Providers", value: "OpenCode Go, Cursor, Codex")
+                LabeledContent("Providers", value: "OpenCode Go, Cursor, Codex, Claude Code")
             }
 
             Section("Updates") {

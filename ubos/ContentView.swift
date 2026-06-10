@@ -14,6 +14,7 @@ struct ContentView: View {
     @AppStorage(AppPreferences.openCodeGoEnabledKey) private var openCodeGoEnabled = true
     @AppStorage(AppPreferences.cursorEnabledKey) private var cursorEnabled = true
     @AppStorage(AppPreferences.codexEnabledKey) private var codexEnabled = true
+    @AppStorage(AppPreferences.claudeCodeEnabledKey) private var claudeCodeEnabled = true
 
     @State private var providers = UsageSnapshot.initial
     @State private var lastRefresh = Date()
@@ -67,6 +68,9 @@ struct ContentView: View {
         }
         .onChange(of: codexEnabled) { _, _ in
             Task { await refreshProvider(CodexUsageProvider.id) }
+        }
+        .onChange(of: claudeCodeEnabled) { _, _ in
+            Task { await refreshProvider(ClaudeCodeUsageProvider.id) }
         }
     }
 
@@ -164,10 +168,12 @@ struct ContentView: View {
         async let cursorSnapshot = CursorUsageProvider.loadSnapshot()
         async let codexSnapshot = CodexUsageProvider.loadSnapshot()
         let opencodeSnapshot = OpenCodeGoUsageProvider.loadSnapshot()
+        let claudeSnapshot = ClaudeCodeUsageProvider.loadSnapshot()
         let updates = await [
             opencodeSnapshot,
             cursorSnapshot,
-            codexSnapshot
+            codexSnapshot,
+            claudeSnapshot
         ]
 
         providers = providers.map { snapshot in
@@ -191,6 +197,8 @@ struct ContentView: View {
             snapshot = await CursorUsageProvider.loadSnapshot()
         case CodexUsageProvider.id:
             snapshot = await CodexUsageProvider.loadSnapshot()
+        case ClaudeCodeUsageProvider.id:
+            snapshot = ClaudeCodeUsageProvider.loadSnapshot()
         default:
             return
         }
@@ -529,6 +537,19 @@ struct UsageSnapshot: Identifiable {
     }
 
     static let initial: [UsageSnapshot] = [
+        UsageSnapshot(
+            id: "claude-code",
+            name: "Claude Code",
+            shortName: "CC",
+            plan: "Claude Code",
+            status: "loading",
+            statusColor: .secondary,
+            color: Color(red: 0.86, green: 0.45, blue: 0.25),
+            lines: [
+                MetricLine(label: "Status", used: 0, limit: 1, format: .text, resetText: "Waiting for first Claude Code refresh.", valueOverride: "loading")
+            ],
+            message: "Waiting for first Claude Code refresh."
+        ),
         UsageSnapshot(
             id: "codex",
             name: "Codex",

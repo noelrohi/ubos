@@ -7,6 +7,7 @@ enum AppPreferences {
     static let openCodeGoEnabledKey = "openCodeGoEnabled"
     static let cursorEnabledKey = "cursorEnabled"
     static let codexEnabledKey = "codexEnabled"
+    static let claudeCodeEnabledKey = "claudeCodeEnabled"
 
     static var refreshIntervalMinutes: Int {
         let stored = UserDefaults.standard.integer(forKey: refreshIntervalMinutesKey)

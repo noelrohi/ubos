@@ -16,6 +16,8 @@
 	<key>com.apple.security.temporary-exception.files.home-relative-path.read-only</key>
 	<array>
 		<string>/.local/share/opencode/</string>
+		<string>/.claude/</string>
+		<string>/.config/claude/</string>
 	</array>
 	<key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
 	<array>

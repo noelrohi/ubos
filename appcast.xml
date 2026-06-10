@@ -5,6 +5,18 @@
     <description>Most recent changes for ubos.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.7 (Build 8)</title>
+      <pubDate>Wed, 10 Jun 2026 18:02:26 +0800</pubDate>
+      <sparkle:version>8</sparkle:version>
+      <sparkle:shortVersionString>1.0.7</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.2</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Adds Claude Code usage tracking from local transcripts.</li><li>Shows Claude Code 5-hour block progress plus daily and weekly token estimates.</li></ul>]]></description>
+      <enclosure url="https://github.com/noelrohi/ubos/releases/download/v1.0.7/ubos-1.0.7.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="3upWa0oQ9pGOea4p0TCcCtkvMyo++v4Ov1AEZvr2qa1gS7T5VRVHS/jCxKF2o5MTus2EPTi2ZiN3CmSDfuUGBg=="
+                 length="1496332" />
+    </item>
+    <item>
       <title>Version 1.0.6 (Build 7)</title>
       <pubDate>Fri, 05 Jun 2026 22:31:29 +0800</pubDate>
       <sparkle:version>7</sparkle:version>

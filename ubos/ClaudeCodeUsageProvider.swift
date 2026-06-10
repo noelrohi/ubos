@@ -23,7 +23,11 @@ enum ClaudeCodeUsageProvider {
             ], message: "Run Claude Code once, then allow ubos to read ~/.claude/projects.")
         }
 
-        let records = files.flatMap(parseRecords).sorted { $0.timestamp < $1.timestamp }
+        var records: [Record] = []
+        for file in files {
+            records.append(contentsOf: parseRecords(path: file))
+        }
+        records.sort { $0.timestamp < $1.timestamp }
         let usageRecords = records.filter { $0.hasUsage }
         guard !usageRecords.isEmpty else {
             return snapshot(status: "no data", statusColor: .orange, lines: [

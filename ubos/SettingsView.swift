@@ -188,7 +188,7 @@ private struct ProviderToggleRow: View {
 
 private struct GeneralSettingsPane: View {
     @AppStorage(AppPreferences.refreshIntervalMinutesKey) private var refreshIntervalMinutes = 15
-    @AppStorage(AppPreferences.usageDisplayModeKey) private var usageDisplayMode = UsageDisplayMode.remaining.rawValue
+    @AppStorage(AppPreferences.usageDisplayModeKey) private var usageDisplayMode = UsageDisplayMode.used.rawValue
     @AppStorage(AppPreferences.openCodeGoEnabledKey) private var openCodeGoEnabled = true
     @AppStorage(AppPreferences.cursorEnabledKey) private var cursorEnabled = true
     @AppStorage(AppPreferences.codexEnabledKey) private var codexEnabled = true
@@ -245,7 +245,7 @@ private struct GeneralSettingsPane: View {
                 }
                 .pickerStyle(.segmented)
 
-                Text("Remaining shows quota like a battery gauge. Used shows consumption against the limit.")
+                Text("Used matches provider usage pages. Remaining flips quota rows into a battery-style view.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

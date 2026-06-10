@@ -252,11 +252,11 @@
 
     <section class="grid">
       <article class="provider card">
-        <div class="name">Claude Code <span class="pill">partial parity</span></div>
+        <div class="name">Claude Code <span class="pill">parity</span></div>
         <ul>
-          <li>Read local transcripts from <code>~/.claude/projects/**/*.jsonl</code>.</li>
-          <li>Compute 5h billing block, today tokens/cost, and trailing 7-day tokens/cost.</li>
-          <li>Costs are API-equivalent estimates, not Claude Pro/Max subscription billing.</li>
+          <li>Fetch live limits from Anthropic OAuth usage: 5h session, weekly, Sonnet, Claude Design, and extra usage.</li>
+          <li>Read local transcripts from <code>~/.claude/projects/**/*.jsonl</code> with ccusage-style dedup, pricing, and 5h block fallback.</li>
+          <li>Show today, yesterday, and 30-day cost/token text rows; costs are API-equivalent estimates.</li>
         </ul>
       </article>
       <article class="provider card">
@@ -313,10 +313,10 @@
         </tr>
         <tr>
           <td>Claude Code usage</td>
-          <td>Reads Claude Code local JSONL transcripts and computes daily usage, model tokens, 5h billing blocks, burn rate, and API-equivalent cost estimates. Optional browser-session Usage API can expose organization-level usage.</td>
-          <td>Read local JSONL transcripts first. Show 5h block progress, today tokens/cost, and trailing 7-day tokens/cost. Skip optional browser-cookie Usage API for now.</td>
-          <td class="status maybe">Partial</td>
-          <td>Use read-only filesystem access under <code>~/.claude/projects</code>. Avoid decrypting Claude desktop cookies until org-wide/external usage is needed.</td>
+          <td>Combines Anthropic OAuth usage endpoint server-truth limits with local JSONL transcript stats for cost/token detail.</td>
+          <td>Load <code>~/.claude/.credentials.json</code>, refresh OAuth when needed, fetch session/weekly/Sonnet/Claude Design/extra usage, and merge with deduped local JSONL today/yesterday/30-day stats.</td>
+          <td class="status yes">Parity</td>
+          <td>Primary credentials source is Claude Code's local OAuth file; Keychain is best-effort. Local transcripts remain a fallback when the live endpoint is unavailable.</td>
         </tr>
         <tr>
           <td>Cursor usage</td>
@@ -411,9 +411,9 @@
       <tbody>
         <tr>
           <td>Claude Code</td>
-          <td><code>~/.claude/projects/**/*.jsonl</code>. Later: <code>~/.claude.json</code>, <code>~/.claude/settings.json</code>, and optional <code>claude.ai/api/organizations/{org_uuid}/usage</code>.</td>
-          <td>5h block, today tokens/cost, weekly tokens/cost. Later: per-model rows, account/subscription metadata, org usage.</td>
-          <td>Local machine only for MVP. API-equivalent costs do not equal subscription charges. Optional org usage requires Claude browser session cookies.</td>
+          <td><code>~/.claude/.credentials.json</code>, Anthropic OAuth usage endpoint, and <code>~/.claude/projects/**/*.jsonl</code> / <code>~/.config/claude/projects/**/*.jsonl</code>.</td>
+          <td>Session, weekly, weekly Sonnet, Claude Design, extra usage, plan tier badge, local today/yesterday/30-day cost and token totals, local 5h fallback.</td>
+          <td>OAuth endpoint is undocumented and may rate-limit. API-equivalent local costs do not equal subscription charges.</td>
         </tr>
         <tr>
           <td>Cursor</td>

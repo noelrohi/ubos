@@ -5,6 +5,18 @@
     <description>Most recent changes for ubos.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.8 (Build 9)</title>
+      <pubDate>Wed, 10 Jun 2026 20:53:57 +0800</pubDate>
+      <sparkle:version>9</sparkle:version>
+      <sparkle:shortVersionString>1.0.8</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.2</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Brings Claude Code usage in line with OpenUsage using live OAuth limits, weekly limits, reset timing, and local cost/token detail.</li><li>Adds a dev bundle scheme, scrollable provider details, provider usage links, and improved provider toggles/display modes.</li></ul>]]></description>
+      <enclosure url="https://github.com/noelrohi/ubos/releases/download/v1.0.8/ubos-1.0.8.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="6b1n3K9X0O72sGho8cHa28n+lyFYJvQMsAvOeJyJkNa9rbX5iMpAxjD9X+AE0f/zS1Vb8RauPXcejx0y+JFsDw=="
+                 length="1578525" />
+    </item>
+    <item>
       <title>Version 1.0.7 (Build 8)</title>
       <pubDate>Wed, 10 Jun 2026 18:02:26 +0800</pubDate>
       <sparkle:version>8</sparkle:version>

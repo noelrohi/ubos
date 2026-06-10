@@ -32,13 +32,20 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 12) {
                 header
 
-                if let selectedProvider {
-                    ProviderDetailView(snapshot: selectedProvider, isRefreshing: isRefreshing) {
-                        await refreshProvider(selectedProvider.id)
+                ScrollView(.vertical) {
+                    if let selectedProvider {
+                        ProviderDetailView(
+                            snapshot: selectedProvider,
+                            isRefreshing: isRefreshing,
+                            usageURL: usageURL(for: selectedProvider.id)
+                        ) {
+                            await refreshProvider(selectedProvider.id)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }
-
-                Spacer(minLength: 0)
+                .scrollIndicators(.visible)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
                 footer
             }
@@ -50,6 +57,7 @@ struct ContentView: View {
         .animation(nil, value: isRefreshing)
         .animation(nil, value: providers.map(\.id))
         .task {
+            selectFirstVisibleProviderIfNeeded()
             startAutoRefreshLoop()
             await refreshAfterPopoverAppears()
         }
@@ -60,23 +68,27 @@ struct ContentView: View {
         .onChange(of: refreshIntervalMinutes) { _, _ in
             startAutoRefreshLoop()
         }
-        .onChange(of: openCodeGoEnabled) { _, _ in
-            Task { await refreshProvider(OpenCodeGoUsageProvider.id) }
+        .onChange(of: openCodeGoEnabled) { _, isEnabled in
+            selectFirstVisibleProviderIfNeeded()
+            if isEnabled { Task { await refreshProvider(OpenCodeGoUsageProvider.id) } }
         }
-        .onChange(of: cursorEnabled) { _, _ in
-            Task { await refreshProvider(CursorUsageProvider.id) }
+        .onChange(of: cursorEnabled) { _, isEnabled in
+            selectFirstVisibleProviderIfNeeded()
+            if isEnabled { Task { await refreshProvider(CursorUsageProvider.id) } }
         }
-        .onChange(of: codexEnabled) { _, _ in
-            Task { await refreshProvider(CodexUsageProvider.id) }
+        .onChange(of: codexEnabled) { _, isEnabled in
+            selectFirstVisibleProviderIfNeeded()
+            if isEnabled { Task { await refreshProvider(CodexUsageProvider.id) } }
         }
-        .onChange(of: claudeCodeEnabled) { _, _ in
-            Task { await refreshProvider(ClaudeCodeUsageProvider.id) }
+        .onChange(of: claudeCodeEnabled) { _, isEnabled in
+            selectFirstVisibleProviderIfNeeded()
+            if isEnabled { Task { await refreshProvider(ClaudeCodeUsageProvider.id) } }
         }
     }
 
     private var sidebar: some View {
         VStack(spacing: 10) {
-            ForEach(providers) { provider in
+            ForEach(visibleProviders) { provider in
                 SidebarProviderButton(snapshot: provider, isSelected: provider.id == selectedProviderID) {
                     selectedProviderID = provider.id
                 }
@@ -88,8 +100,34 @@ struct ContentView: View {
         .frame(width: 54)
     }
 
+    private var visibleProviders: [UsageSnapshot] {
+        providers.filter { isProviderVisible($0.id) }
+    }
+
     private var selectedProvider: UsageSnapshot? {
-        providers.first { $0.id == selectedProviderID } ?? providers.first
+        visibleProviders.first { $0.id == selectedProviderID } ?? visibleProviders.first
+    }
+
+    private func isProviderVisible(_ id: String) -> Bool {
+        switch id {
+        case OpenCodeGoUsageProvider.id:
+            openCodeGoEnabled
+        case CursorUsageProvider.id:
+            cursorEnabled
+        case CodexUsageProvider.id:
+            codexEnabled
+        case ClaudeCodeUsageProvider.id:
+            claudeCodeEnabled
+        default:
+            true
+        }
+    }
+
+    private func selectFirstVisibleProviderIfNeeded() {
+        guard !isProviderVisible(selectedProviderID) else { return }
+        if let firstVisible = visibleProviders.first {
+            selectedProviderID = firstVisible.id
+        }
     }
 
     private var header: some View {
@@ -155,6 +193,21 @@ struct ContentView: View {
         }
     }
 
+    private func usageURL(for providerID: String) -> URL? {
+        switch providerID {
+        case ClaudeCodeUsageProvider.id:
+            return URL(string: "https://claude.ai/settings/usage")
+        case CursorUsageProvider.id:
+            return URL(string: "https://cursor.com/dashboard")
+        case CodexUsageProvider.id:
+            return URL(string: "https://chatgpt.com/#settings/Subscription")
+        case OpenCodeGoUsageProvider.id:
+            return URL(string: "https://opencode.ai/billing")
+        default:
+            return nil
+        }
+    }
+
     private func refreshData() async {
         guard !isRefreshing else { return }
 
@@ -168,7 +221,7 @@ struct ContentView: View {
         async let cursorSnapshot = CursorUsageProvider.loadSnapshot()
         async let codexSnapshot = CodexUsageProvider.loadSnapshot()
         let opencodeSnapshot = OpenCodeGoUsageProvider.loadSnapshot()
-        let claudeSnapshot = ClaudeCodeUsageProvider.loadSnapshot()
+        async let claudeSnapshot = ClaudeCodeUsageProvider.loadSnapshot()
         let updates = await [
             opencodeSnapshot,
             cursorSnapshot,
@@ -198,7 +251,7 @@ struct ContentView: View {
         case CodexUsageProvider.id:
             snapshot = await CodexUsageProvider.loadSnapshot()
         case ClaudeCodeUsageProvider.id:
-            snapshot = ClaudeCodeUsageProvider.loadSnapshot()
+            snapshot = await ClaudeCodeUsageProvider.loadSnapshot()
         default:
             return
         }
@@ -261,6 +314,7 @@ struct SidebarProviderButton: View {
 struct ProviderDetailView: View {
     let snapshot: UsageSnapshot
     let isRefreshing: Bool
+    let usageURL: URL?
     let retry: () async -> Void
 
     var body: some View {
@@ -288,7 +342,15 @@ struct ProviderDetailView: View {
                 }
 
                 if snapshot.hasUsageData {
-                    VStack(spacing: 14) {
+                    VStack(alignment: .leading, spacing: 14) {
+                        if let usageURL {
+                            Link(destination: usageURL) {
+                                Label("Open usage page", systemImage: "arrow.up.right.square")
+                                    .font(.caption.weight(.semibold))
+                            }
+                            .foregroundStyle(.blue)
+                        }
+
                         ForEach(visibleLines) { line in
                             MetricLineView(line: line, color: snapshot.color)
                         }
@@ -370,7 +432,7 @@ struct BrandIconView: View {
 }
 
 struct MetricLineView: View {
-    @AppStorage(AppPreferences.usageDisplayModeKey) private var usageDisplayMode = UsageDisplayMode.remaining.rawValue
+    @AppStorage(AppPreferences.usageDisplayModeKey) private var usageDisplayMode = UsageDisplayMode.used.rawValue
 
     let line: MetricLine
     let color: Color
@@ -423,9 +485,9 @@ struct MetricLineView: View {
     private var displayedValue: Double {
         switch mode {
         case .used:
-            line.used
+            return line.used
         case .remaining:
-            max(0, line.limit - line.used)
+            return max(0, line.limit - line.used)
         }
     }
 
@@ -514,7 +576,7 @@ struct UsageSnapshot: Identifiable {
     }
 
     var hasUsageData: Bool {
-        lines.contains { $0.format != .text }
+        lines.contains { $0.format != .text || ($0.format == .text && $0.label != "Status") }
     }
 
     var isTransientFailure: Bool {
@@ -545,6 +607,7 @@ struct UsageSnapshot: Identifiable {
             status: "loading",
             statusColor: .secondary,
             color: Color(red: 0.86, green: 0.45, blue: 0.25),
+            iconName: "ClaudeIcon",
             lines: [
                 MetricLine(label: "Status", used: 0, limit: 1, format: .text, resetText: "Waiting for first Claude Code refresh.", valueOverride: "loading")
             ],
@@ -644,6 +707,13 @@ struct MetricLine: Identifiable {
 
         switch format {
         case .percent:
+            if value > 0, value < 10 {
+                let rounded = (value * 10).rounded() / 10
+                if rounded == rounded.rounded() {
+                    return "\(Int(rounded))%"
+                }
+                return "\(String(format: "%.1f", rounded))%"
+            }
             return "\(Int(value.rounded()))%"
         case .dollars:
             return "$\(Int(value.rounded())) / $\(Int(limit.rounded()))"
